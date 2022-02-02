@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,25 +29,23 @@ public class CozinhaController {
 	private CozinhaService cozinhaService;
 
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public List<Cozinha> listar(){
-
         return cozinhaService.listar();
 
     }
 
     @GetMapping("/{cozinhaId}")
-    public Cozinha buscar(@PathVariable Long cozinhaId){
-
-        return null;
+    public Cozinha buscar(@PathVariable("cozinhaId") Long id){
+        return cozinhaService.buscar(id);
 
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cozinha adicionar(){
+    public Cozinha adicionar(@RequestBody Cozinha cozinha){
 
-        return null;
+        return cozinhaService.adicionar(cozinha);
 
     }
 

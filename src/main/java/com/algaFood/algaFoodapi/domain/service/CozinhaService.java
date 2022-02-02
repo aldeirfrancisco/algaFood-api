@@ -4,9 +4,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.algaFood.algaFoodapi.domain.model.Cozinha;
 
@@ -21,16 +22,17 @@ public class CozinhaService {
     }
 
    
-    public Cozinha buscar(@PathVariable Long cozinhaId){
-
-        return null;
-
+    public Cozinha buscar(Long cozinhaId){
+    	TypedQuery query = manager.createQuery("select c from Cozinha c where c.id = :cozinhaId ", Cozinha.class);
+    	      query.setParameter("cozinhaId", cozinhaId);
+    	return (Cozinha) query.getSingleResult();
     }
 
-  
+    @Transactional
     public Cozinha adicionar( Cozinha cozinha){
-
-        return null;
+    	manager.persist(cozinha);
+    	manager.flush();
+        return cozinha;
 
     }
 

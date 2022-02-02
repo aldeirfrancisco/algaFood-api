@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,7 +27,7 @@ public class Restaurante {
     private String nome;
 
     private BigDecimal taxaFrete;
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
