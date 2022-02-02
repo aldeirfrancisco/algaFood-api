@@ -5,8 +5,10 @@ import java.util.List;
 import javax.print.attribute.standard.Media;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +38,9 @@ public class CozinhaController {
     }
 
     @GetMapping("/{cozinhaId}")
-    public Cozinha buscar(@PathVariable("cozinhaId") Long id){
-        return cozinhaService.buscar(id);
-
+    public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId){
+    	Cozinha coz =  cozinhaService.buscar(cozinhaId);
+       return ResponseEntity.ok(coz);
     }
 
     @PostMapping
@@ -50,15 +52,33 @@ public class CozinhaController {
     }
 
     @PutMapping("/{cozinhaId}")
-    public Cozinha atualizar() {
-
-        return null;
+    public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId,
+    		@RequestBody Cozinha cozinha) {
+    	Cozinha coz =  cozinhaService.buscar(cozinhaId);
+    	if(coz != null) {
+    	Cozinha cozinhaAtual = cozinhaService.atualizar(coz);
+    		return ResponseEntity.ok(cozinhaAtual);
+    	}
+    	return ResponseEntity.notFound().build();
+    	
 
     }
 
     @DeleteMapping("/{cozinhaId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover() {
-
+    public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) {
+    	try {
+    	   	Cozinha coz =  cozinhaService.buscar(cozinhaId);
+    	   	
+        	if(coz != null) {
+        		cozinhaService.remover(coz);
+        		return ResponseEntity.noContent().build();
+        	} else {
+        		
+        		return ResponseEntity.notFound().build();
+        	}
+      
+		} catch (DataIntegrityViolationException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
     }
 }

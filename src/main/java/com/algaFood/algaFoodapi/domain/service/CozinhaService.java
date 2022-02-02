@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +27,7 @@ public class CozinhaService {
     public Cozinha buscar(Long cozinhaId){
     	TypedQuery query = manager.createQuery("select c from Cozinha c where c.id = :cozinhaId ", Cozinha.class);
     	      query.setParameter("cozinhaId", cozinhaId);
-    	return (Cozinha) query.getSingleResult();
+    	return  (Cozinha) query.getSingleResult();
     }
 
     @Transactional
@@ -36,16 +38,16 @@ public class CozinhaService {
 
     }
 
-   
+    @Transactional
     public Cozinha atualizar(Cozinha cozinha) {
-
-        return null;
-
+    	  manager.persist(cozinha);
+    	  manager.flush();
+          return cozinha;
     }
 
    
-  
-    public void remover(Cozinha cozinha) {
-
+    @Transactional
+    public void remover(Cozinha coz) {
+    	manager.remove(coz);
     }
 }
