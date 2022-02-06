@@ -6,10 +6,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.Criteria;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +33,6 @@ public class CozinhaService implements CozinhaRepository {
     public Cozinha buscar(Long cozinhaId){
     	TypedQuery query = manager.createQuery("select c from Cozinha c where c.id = :cozinhaId ", Cozinha.class);
     	      query.setParameter("cozinhaId", cozinhaId);
-    	      
     	      Cozinha cozinha = (Cozinha) query.getSingleResult();
     	      if(cozinha == null) {
     	    		throw new EmptyResultDataAccessException(1);

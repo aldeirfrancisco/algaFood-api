@@ -6,10 +6,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
+import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
 import com.algaFood.algaFoodapi.domain.model.Cozinha;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.repository.RestauranteRepository;
@@ -18,6 +22,8 @@ import com.algaFood.algaFoodapi.domain.repository.RestauranteRepository;
 public class RestauranteService  implements RestauranteRepository{
 	 @PersistenceContext
 	 private EntityManager manager;
+	 @Autowired
+	 private CozinhaService cozinhaService;
 	
 	@Override
 	public List<Restaurante> listar() {
@@ -34,21 +40,53 @@ public class RestauranteService  implements RestauranteRepository{
 		return restaurante;
 	}
 
+	@Transactional
 	@Override
 	public Restaurante adicionar(Restaurante restaurante) {
-		// TODO Auto-generated method stub
-		return null;
+		Long idCozinha = restaurante.getCozinha().getId();
+		Cozinha cozinha = cozinhaService.buscar(idCozinha);
+		 if(cozinha == null) {
+			 throw new EntidadeNaoEncontradaExecption(
+					 String.format("Não existe  cadastro de cozinha com código %d", idCozinha));
+		 }
+		 restaurante.setCozinha(cozinha);
+		manager.persist(restaurante);
+    	manager.flush();
+        return restaurante;
 	}
-
+    
+	@Transactional
 	@Override
 	public Restaurante atualizar(Restaurante restaurante) {
-		// TODO Auto-generated method stub
-		return null;
+		Long idCozinha = restaurante.getCozinha().getId();
+		Cozinha cozinha = cozinhaService.buscar(idCozinha);
+		 if(cozinha == null) {
+			 throw new EntidadeNaoEncontradaExecption(
+					 String.format("Não existe  cadastro de cozinha com código %d", idCozinha));
+		 }
+		 restaurante.setCozinha(cozinha);
+		 manager.persist(restaurante);
+   	     Restaurante rest = buscar(restaurante.getId());
+         return rest;
 	}
-
+    
+	@Transactional
 	@Override
 	public void remover(Long id) {
-		// TODO Auto-generated method stub
+		
+		try {
+			Restaurante restaurante = buscar(id);
+        	manager.remove(restaurante);
+        	
+    	} catch (EmptyResultDataAccessException e){
+             throw new EntidadeNaoEncontradaExecption(
+               String.format("Não existe um cadastro de restaurante com código %d", id));	
+    		
+		 } catch (DataIntegrityViolationException e) {
+			throw new EntidadeEmUsoException(
+			  String.format("Restaurante de código %d não pode ser removido, pois está em uso", id));
+		}
+    	
 		
 	}
      
