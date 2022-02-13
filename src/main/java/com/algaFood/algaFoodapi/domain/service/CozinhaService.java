@@ -18,53 +18,38 @@ import com.algaFood.algaFoodapi.domain.model.Cozinha;
 import com.algaFood.algaFoodapi.domain.repository.CozinhaRepository;
 
 @Service
-public class CozinhaService implements CozinhaRepository {
-	
-	@PersistenceContext
-   private EntityManager manager;
-    
-	@Override
+public class CozinhaService  {
+
+   private CozinhaRepository cozinhaRepository;
+    public CozinhaService(CozinhaRepository cozinhaRepository) {
+    	this.cozinhaRepository = cozinhaRepository;
+    }
+
     public List<Cozinha> listar(){
-        return manager.createQuery("from Cozinha", Cozinha.class).getResultList();
+        return cozinhaRepository.findAll();
 
     }
 
-	@Override
     public Cozinha buscar(Long cozinhaId){
-    	TypedQuery query = manager.createQuery("select c from Cozinha c where c.id = :cozinhaId ", Cozinha.class);
-    	      query.setParameter("cozinhaId", cozinhaId);
-    	      Cozinha cozinha = (Cozinha) query.getSingleResult();
-    	      if(cozinha == null) {
-    	    		throw new EmptyResultDataAccessException(1);
-    	    	}
-    	      return cozinha;
-    	      
+         return cozinhaRepository.findById(cozinhaId)
+        		 .orElseThrow(() -> new EmptyResultDataAccessException(1));	      
     }
 
     @Transactional
-    @Override
     public Cozinha adicionar( Cozinha cozinha){
-    	manager.persist(cozinha);
-    	manager.flush();
-        return cozinha;
-
+    	return cozinhaRepository.save(cozinha);
     }
 
     @Transactional
-    @Override
     public Cozinha atualizar(Cozinha cozinha) {
-    	  manager.persist(cozinha);
-    	  manager.flush();
-          return cozinha;
+    	return cozinhaRepository.save(cozinha);
     }
 
    
     @Transactional
-    @Override
     public void remover(Long id) {
     	try {
-    		Cozinha cozinha = buscar(id);
-        	manager.remove(cozinha);
+        	cozinhaRepository.deleteById(id);
         	
     	} catch (EmptyResultDataAccessException e){
              throw new EntidadeNaoEncontradaExecption(

@@ -22,6 +22,7 @@ import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.model.Estado;
 import com.algaFood.algaFoodapi.domain.model.Estado;
 import com.algaFood.algaFoodapi.domain.repository.EstadoRepository;
+import com.algaFood.algaFoodapi.domain.service.EstadoService;
 
 
 @RestController
@@ -29,25 +30,25 @@ import com.algaFood.algaFoodapi.domain.repository.EstadoRepository;
 public class EstadoController {
 	
      @Autowired
-	private EstadoRepository estadoRepository;
+	private EstadoService estadoService;
 
 
     @GetMapping
     public List<Estado> listar(){
-        return estadoRepository.listar();
+        return estadoService.listar();
 
     }
     
 	 @GetMapping("/{estadoId}")
 	public ResponseEntity<Estado> buscar(@PathVariable Long estadoId){
-		 Estado estado  =  estadoRepository.buscar(estadoId);
+		 Estado estado  =  estadoService.buscar(estadoId);
 	       return ResponseEntity.ok(estado);
 	}
     
 	 @PostMapping
 	 public ResponseEntity<?> adicionar(@RequestBody Estado estado){ 
 		 try {
-			  estado = estadoRepository.adicionar(estado);
+			  estado = estadoService.adicionar(estado);
 			 return ResponseEntity.status(HttpStatus.CREATED)
 					 .body(estado);
 		} catch (EntidadeNaoEncontradaExecption e) {
@@ -59,10 +60,10 @@ public class EstadoController {
 	 @PutMapping("/{estadoId}")
 	    public ResponseEntity<Estado> atualizar(@PathVariable Long estadoId,
 	    		@RequestBody Estado estado) {
-	    	Estado estadoAtual =  estadoRepository.buscar(estadoId);
+	    	Estado estadoAtual =  estadoService.buscar(estadoId);
 	    	if(estadoAtual != null) {
 	    		BeanUtils.copyProperties(estado, estadoAtual, "id");
-	    		estadoAtual = estadoRepository.atualizar(estadoAtual);
+	    		estadoAtual = estadoService.atualizar(estadoAtual);
 	    		return ResponseEntity.ok(estadoAtual);
 	    	}
 	    	return ResponseEntity.notFound().build();
@@ -72,7 +73,7 @@ public class EstadoController {
 	  @DeleteMapping("/{estadoId}")
 	    public ResponseEntity<Restaurante> remover(@PathVariable Long estadoId) {
 	    	try {
-	    		estadoRepository.remover(estadoId);
+	    		estadoService.remover(estadoId);
 	        		return ResponseEntity.noContent().build();
 	        		
 	    	} catch (EntidadeNaoEncontradaExecption e ){

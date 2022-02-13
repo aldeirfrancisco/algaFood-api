@@ -2,9 +2,7 @@ package com.algaFood.algaFoodapi.domain.service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,49 +15,45 @@ import com.algaFood.algaFoodapi.domain.model.Cidade;
 import com.algaFood.algaFoodapi.domain.repository.CidadeRepository;
 
 @Service
-public class CidadeService implements CidadeRepository {
+public class CidadeService {
 	
-	@PersistenceContext
-   private EntityManager manager;
+	public static final String MSG_COZINHA_EM_USO = "Cozinha de código %d não pode ser removida, pois está em uso";
+	
+	
+   private final CidadeRepository cidadeRepository;
+	
+	CidadeService(CidadeRepository cidadeRepository){
+		this.cidadeRepository = cidadeRepository;
+	}
     
     public List<Cidade> listar(){
-        return manager.createQuery("from Cidade", Cidade.class).getResultList();
+        return cidadeRepository.findAll();
 
     }
 
-	@Override
+    
 	public Cidade buscar(Long cidadeId) {
-		TypedQuery query = manager.createQuery("select r from Cidade r where r.id = :cidadeId", Cidade.class);
-		Cidade cidade =  (Cidade) query.setParameter("cidadeId", cidadeId).getSingleResult();
-		 if(cidadeId == null) {
-			 throw new EmptyResultDataAccessException(1);
-		 }
-		return cidade;
+		return cidadeRepository.findById(cidadeId)
+				.orElseThrow(()-> new EmptyResultDataAccessException(1));
+	
+		 
 	}
 
 	@Transactional
-	@Override
 	public Cidade adicionar(Cidade cidade) {
-		manager.persist(cidade);
-		 cidade = buscar(cidade.getId());
-        return cidade;
+		return cidadeRepository.save(cidade);
 	}
 
 	@Transactional
-	@Override
 	public Cidade atualizar(Cidade cidade) {
-		 manager.persist(cidade);
-		 cidade = buscar(cidade.getId());
-         return cidade;
+		return cidadeRepository.save(cidade);
 	}
 
 	@Transactional
-	@Override
 	public void remover(Long id) {
 		
 		try {
-			Cidade cidadeId = buscar(id);
-        	manager.remove(cidadeId);
+        	cidadeRepository.deleteById(id);
         	
     	} catch (EmptyResultDataAccessException e){
              throw new EntidadeNaoEncontradaExecption(
@@ -67,7 +61,7 @@ public class CidadeService implements CidadeRepository {
     		
 		 } catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
-			  String.format("Cidade de código %d não pode ser removido, pois está em uso", id));
+			  String.format( MSG_COZINHA_EM_USO, id));
 		}
     	
 		

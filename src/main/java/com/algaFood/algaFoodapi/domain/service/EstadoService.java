@@ -2,9 +2,7 @@ package com.algaFood.algaFoodapi.domain.service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -13,56 +11,44 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
-import com.algaFood.algaFoodapi.domain.model.Cozinha;
-import com.algaFood.algaFoodapi.domain.model.Estado;
-import com.algaFood.algaFoodapi.domain.model.Estado;
 import com.algaFood.algaFoodapi.domain.model.Estado;
 import com.algaFood.algaFoodapi.domain.repository.EstadoRepository;
 
 @Service
-public class EstadoService implements EstadoRepository {
+public class EstadoService {
 	
-	@PersistenceContext
-   private EntityManager manager;
-    
+	
+   private EstadoRepository estadoRepository;
+    public EstadoService(EstadoRepository estadoRepository) {
+    	this.estadoRepository = estadoRepository;
+    }
     public List<Estado> listar(){
-        return manager.createQuery("from Estado", Estado.class).getResultList();
+        return estadoRepository.findAll();
 
     }
 
-	@Override
+
 	public Estado buscar(Long estadoId) {
-		TypedQuery query = manager.createQuery("select r from Estado r where r.id = :estadoId", Estado.class);
-		Estado estado =  (Estado) query.setParameter("estadoId", estadoId).getSingleResult();
-		 if(estado == null) {
-			 throw new EmptyResultDataAccessException(1);
-		 }
-		return estado;
+		return estadoRepository.findById(estadoId)
+				.orElseThrow(() -> new EmptyResultDataAccessException(1));
+		
 	}
 
 	@Transactional
-	@Override
 	public Estado adicionar(Estado estado) {
-		manager.persist(estado);
-    	manager.flush();
-        return estado;
+		return estadoRepository.save(estado);	
 	}
 
 	@Transactional
-	@Override
 	public Estado atualizar(Estado estado) {
-		 manager.persist(estado);
-		 estado = buscar(estado.getId());
-         return estado;
+		return estadoRepository.save(estado);
 	}
 
 	@Transactional
-	@Override
 	public void remover(Long id) {
 		
 		try {
-			Estado estado = buscar(id);
-        	manager.remove(estado);
+        	estadoRepository.deleteById(id);
         	
     	} catch (EmptyResultDataAccessException e){
              throw new EntidadeNaoEncontradaExecption(

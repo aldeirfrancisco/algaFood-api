@@ -20,32 +20,36 @@ import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
 import com.algaFood.algaFoodapi.domain.model.Cidade;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.repository.CidadeRepository;
+import com.algaFood.algaFoodapi.domain.service.CidadeService;
 
 
 @RestController
 @RequestMapping("/cidades")
 public class CidadeController {
 	
-     @Autowired
-	private CidadeRepository cidadeRepository;
-
+//     @Autowired
+//	private CidadeService cidadeService;
+	 private final CidadeService cidadeService;
+    CidadeController(CidadeService cidadeService){
+    	this.cidadeService = cidadeService;
+    }
 
     @GetMapping
     public List<Cidade> listar(){
-        return cidadeRepository.listar();
+        return this.cidadeService.listar();
 
     }
     
 	 @GetMapping("/{cidadeId}")
 	public ResponseEntity<Cidade> buscar(@PathVariable Long cidadeId){
-		 Cidade cidade  =  cidadeRepository.buscar(cidadeId);
+		 Cidade cidade  =  cidadeService.buscar(cidadeId);
 	       return ResponseEntity.ok(cidade);
 	}
     
 	 @PostMapping
 	 public ResponseEntity<?> adicionar(@RequestBody Cidade cidade){ 
 		 try {
-			  cidade = cidadeRepository.adicionar(cidade);
+			  cidade = cidadeService.adicionar(cidade);
 			 return ResponseEntity.status(HttpStatus.CREATED)
 					 .body(cidade);
 		} catch (EntidadeNaoEncontradaExecption e) {
@@ -57,10 +61,10 @@ public class CidadeController {
 	 @PutMapping("/{cidadeId}")
 	    public ResponseEntity<Cidade> atualizar(@PathVariable Long cidadeId,
 	    		@RequestBody Cidade cidade) {
-	    	Cidade cidadeAtual =  cidadeRepository.buscar(cidadeId);
+	    	Cidade cidadeAtual =  cidadeService.buscar(cidadeId);
 	    	if(cidadeAtual != null) {
 	    		BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-	    		cidadeAtual = cidadeRepository.atualizar(cidadeAtual);
+	    		cidadeAtual = cidadeService.atualizar(cidadeAtual);
 	    		return ResponseEntity.ok(cidadeAtual);
 	    	}
 	    	return ResponseEntity.notFound().build();
@@ -70,7 +74,7 @@ public class CidadeController {
 	  @DeleteMapping("/{cidadeId}")
 	    public ResponseEntity<Restaurante> remover(@PathVariable Long cidadeId) {
 	    	try {
-	    		cidadeRepository.remover(cidadeId);
+	    		cidadeService.remover(cidadeId);
 	        		return ResponseEntity.noContent().build();
 	        		
 	    	} catch (EntidadeNaoEncontradaExecption e ){
