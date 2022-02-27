@@ -7,9 +7,8 @@ import org.springframework.stereotype.Repository;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 
 @Repository
-public interface RestauranteRepository 
-    extends JpaRepository<Restaurante, Long>,  RestauranteRepositoryQueries,
-     JpaSpecificationExecutor<Restaurante>{
+public interface RestauranteRepository extends JpaRepository<Restaurante, Long>,
+    RestauranteRepositoryQueries, JpaSpecificationExecutor<Restaurante>{
 	
      
 }
