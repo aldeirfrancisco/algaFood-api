@@ -1,5 +1,6 @@
 package com.algaFood.algaFoodapi.domain.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.PersistenceContext;
@@ -31,6 +32,10 @@ public class RestauranteService {
 
 	public List<Restaurante> listar() {
 		 return restauranteRepository.findAll();
+	}
+	
+	public List<Restaurante> restaurantePorNomeFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+		 return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
 	}
 
 
