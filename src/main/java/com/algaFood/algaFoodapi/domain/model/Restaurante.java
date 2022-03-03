@@ -1,12 +1,16 @@
 package com.algaFood.algaFoodapi.domain.model;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,9 +31,16 @@ public class Restaurante {
     private String nome;
 
     private BigDecimal taxaFrete;
-    @JsonIgnore
+    
     @ManyToOne
-    @JoinColumn(name = "cozinha_id")
+    @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;
+    
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "restaurante_forma_pagamento",
+            joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
+    private Set<FormaPagamento> formasPagamento = new HashSet<>();
     
 }
