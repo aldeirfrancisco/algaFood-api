@@ -3,6 +3,7 @@ package com.algaFood.algaFoodapi.domain.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -46,12 +48,12 @@ public class Restaurante {
     @Embedded
     private Endereco endereco;
     
-//    @CreationTimestamp
-//    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false)
     private LocalDateTime dataCadastro;
     
-//    @UpdateTimestamp
-//    @Column(nullable = false)
+    @UpdateTimestamp
+    @Column(nullable = false)
     private LocalDateTime dataAtualizacao;
     
     @JsonIgnore
@@ -60,5 +62,9 @@ public class Restaurante {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private Set<FormaPagamento> formasPagamento = new HashSet<>();
+    
+    
+    @OneToMany(mappedBy = "restaurante")
+    private List<Produto> produtos;
     
 }
