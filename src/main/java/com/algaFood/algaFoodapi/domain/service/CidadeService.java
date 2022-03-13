@@ -2,8 +2,6 @@ package com.algaFood.algaFoodapi.domain.service;
 
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -12,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
 import com.algaFood.algaFoodapi.domain.model.Cidade;
+import com.algaFood.algaFoodapi.domain.model.Estado;
 import com.algaFood.algaFoodapi.domain.repository.CidadeRepository;
 
 @Service
@@ -26,9 +25,12 @@ public class CidadeService {
 	
 	
    private final CidadeRepository cidadeRepository;
+   
+   private final EstadoService estadoService;
 	
-	CidadeService(CidadeRepository cidadeRepository){
+	CidadeService(CidadeRepository cidadeRepository , EstadoService estadoService){
 		this.cidadeRepository = cidadeRepository;
+		this.estadoService = estadoService;
 	}
     
     public List<Cidade> listar(){
@@ -42,17 +44,18 @@ public class CidadeService {
 				.orElseThrow(()->new EntidadeNaoEncontradaExecption(
 			               String.format(MSG_CIDADE_NAO_ENCONTRADA, cidadeId)));
 	
-		 
 	}
 
 	@Transactional
 	public Cidade adicionar(Cidade cidade) {
+		Estado estado = estadoService.buscar(cidade.getEstado().getId());
+		cidade.setEstado(estado);
 		return cidadeRepository.save(cidade);
 	}
 
-	@Transactional
+
 	public Cidade atualizar(Cidade cidade) {
-		return cidadeRepository.save(cidade);
+		return adicionar(cidade);
 	}
 
 	@Transactional

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
+import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.service.RestauranteService;
 
@@ -41,8 +42,14 @@ public class RestauranteController {
 	 @PostMapping
 	 @ResponseStatus(HttpStatus.CREATED)
 	 public Restaurante adicionar(@RequestBody Restaurante restaurante){ 
-		 return  restauranteService.adicionar(restaurante);
+		 try {
+			 return  restauranteService.adicionar(restaurante);
+		 } catch (Exception e) {
+				
+             throw new NegocioException(e.getMessage());
+			}
 	 }
+	 
 	 
 	    @PutMapping("/{restauranteId}")
 	    public Restaurante atualizar(@PathVariable Long restauranteId,
@@ -50,10 +57,18 @@ public class RestauranteController {
 	    	
 	    	 Restaurante restauranteAtual =  restauranteService.buscar(restauranteId);
 	    	 BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco");
-	    	
-	    	 return restauranteService.atualizar(restauranteAtual);
+	    	 
+	    	 try {
+	    		 
+	    		 return restauranteService.atualizar(restauranteAtual);
+	    	 
+		    } catch (Exception e) {
+				
+	            throw new NegocioException(e.getMessage());
+			}
 	    	
 	    }
+	    
 	    
 	    @DeleteMapping("/{restauranteId}")
 	    public  void remover(@PathVariable Long restauranteId) {
