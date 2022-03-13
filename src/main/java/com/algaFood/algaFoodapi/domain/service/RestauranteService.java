@@ -3,9 +3,6 @@ package com.algaFood.algaFoodapi.domain.service;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
-import com.algaFood.algaFoodapi.domain.model.Cozinha;
+import com.algaFood.algaFoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.repository.RestauranteRepository;
 
@@ -24,8 +21,6 @@ public class RestauranteService {
 	 private static final String MSG_RESTAURANTE_EM_USO 
 	       = "Restaurante de código %d não pode ser removido, pois está em uso";
 
-	private static final String MSG_RESTAURANTE_NAO_ENCONTRADA 
-	       = "Não existe um cadastro de restaurante com código %d";
 
 	private static final String MSG_COZINHA_NAO_ENCONTRADA 
 	       = "Não existe  cadastro de cozinha com código %d";
@@ -51,8 +46,7 @@ public class RestauranteService {
 
 	public Restaurante buscar(Long restauranteId) {
 		return restauranteRepository.findById(restauranteId)
-				.orElseThrow(()->new EntidadeNaoEncontradaExecption(
-			               String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, restauranteId)));
+				.orElseThrow(()-> new  RestauranteNaoEncontradoException(restauranteId));
 		
 			
 		
@@ -83,8 +77,7 @@ public class RestauranteService {
         	restauranteRepository.flush();
         	
     	} catch (EmptyResultDataAccessException e){
-             throw new EntidadeNaoEncontradaExecption(
-               String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id));	
+             throw new RestauranteNaoEncontradoException(id);	
     		
 		 } catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
