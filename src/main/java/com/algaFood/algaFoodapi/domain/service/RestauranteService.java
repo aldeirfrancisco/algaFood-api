@@ -21,11 +21,21 @@ import com.algaFood.algaFoodapi.domain.repository.RestauranteRepository;
 @Service
 public class RestauranteService {
 
+	 private static final String MSG_RESTAURANTE_EM_USO 
+	       = "Restaurante de código %d não pode ser removido, pois está em uso";
+
+	private static final String MSG_RESTAURANTE_NAO_ENCONTRADA 
+	       = "Não existe um cadastro de restaurante com código %d";
+
+	private static final String MSG_COZINHA_NAO_ENCONTRADA 
+	       = "Não existe  cadastro de cozinha com código %d";
+	 
 	 private RestauranteRepository restauranteRepository;
 	 
 	 public RestauranteService(RestauranteRepository restauranteRepository){
 		 this.restauranteRepository = restauranteRepository;
 	 }
+	 
 	 @Autowired
 	 private CozinhaService cozinhaService;
 	
@@ -34,14 +44,15 @@ public class RestauranteService {
 		 return restauranteRepository.findAll();
 	}
 	
-	public List<Restaurante> restaurantePorNomeFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+	public List<Restaurante> restaurantePorNomeFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal         					taxaFreteFinal) {
 		 return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
 	}
 
 
 	public Restaurante buscar(Long restauranteId) {
 		return restauranteRepository.findById(restauranteId)
-				.orElseThrow(()->new EmptyResultDataAccessException(1));
+				.orElseThrow(()->new EntidadeNaoEncontradaExecption(
+			               String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, restauranteId)));
 		
 			
 		
@@ -50,12 +61,7 @@ public class RestauranteService {
 	@Transactional
 	public Restaurante adicionar(Restaurante restaurante) {
 		Long idCozinha = restaurante.getCozinha().getId();
-		Cozinha cozinha = cozinhaService.buscar(idCozinha);
-		 if(cozinha == null) {
-			 throw new EntidadeNaoEncontradaExecption(
-					 String.format("Não existe  cadastro de cozinha com código %d", idCozinha));
-		 }
-		 restaurante.setCozinha(cozinha);
+		 restaurante.setCozinha( cozinhaService.buscar(idCozinha) );
 		 return restauranteRepository.save(restaurante);
  
 	}
@@ -63,12 +69,7 @@ public class RestauranteService {
 	@Transactional
 	public Restaurante atualizar(Restaurante restaurante) {
 		Long idCozinha = restaurante.getCozinha().getId();
-		Cozinha cozinha = cozinhaService.buscar(idCozinha);
-		 if(cozinha == null) {
-			 throw new EntidadeNaoEncontradaExecption(
-					 String.format("Não existe  cadastro de cozinha com código %d", idCozinha));
-		 }
-		 restaurante.setCozinha(cozinha);
+		 restaurante.setCozinha(cozinhaService.buscar(idCozinha));
 		 return restauranteRepository.save(restaurante);
 	}
     
@@ -77,15 +78,17 @@ public class RestauranteService {
 	public void remover(Long id) {
 		
 		try {
+			
         	restauranteRepository.deleteById(id);
+        	restauranteRepository.flush();
         	
     	} catch (EmptyResultDataAccessException e){
              throw new EntidadeNaoEncontradaExecption(
-               String.format("Não existe um cadastro de restaurante com código %d", id));	
+               String.format(MSG_RESTAURANTE_NAO_ENCONTRADA, id));	
     		
 		 } catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
-			  String.format("Restaurante de código %d não pode ser removido, pois está em uso", id));
+			  String.format(MSG_RESTAURANTE_EM_USO, id));
 		}
     	
 		

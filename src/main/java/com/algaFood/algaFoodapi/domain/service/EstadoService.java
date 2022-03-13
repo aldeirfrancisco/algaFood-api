@@ -18,49 +18,60 @@ import com.algaFood.algaFoodapi.domain.repository.EstadoRepository;
 public class EstadoService {
 	
 	
-   private EstadoRepository estadoRepository;
-    public EstadoService(EstadoRepository estadoRepository) {
-    	this.estadoRepository = estadoRepository;
-    }
-    public List<Estado> listar(){
-        return estadoRepository.findAll();
-
-    }
-
-
-	public Estado buscar(Long estadoId) {
-		return estadoRepository.findById(estadoId)
-				.orElseThrow(() -> new EmptyResultDataAccessException(1));
+	    private static final String MSG_ESTADO_EM_USO 
+	      = "Estado de código %d não pode ser removido, pois está em uso";
+	   
+		private static final String MSG_ESTADO_NAO_ENCONTRADA 
+		   = "Não existe um cadastro de estado com código %d";
 		
-	}
+		private EstadoRepository estadoRepository;
+	
+	    public EstadoService(EstadoRepository estadoRepository) {
+	    	this.estadoRepository = estadoRepository;
+	    }
+	    public List<Estado> listar(){
+	        return estadoRepository.findAll();
+	
+	    }
 
-	@Transactional
-	public Estado adicionar(Estado estado) {
-		return estadoRepository.save(estado);	
-	}
 
-	@Transactional
-	public Estado atualizar(Estado estado) {
-		return estadoRepository.save(estado);
-	}
-
-	@Transactional
-	public void remover(Long id) {
-		
-		try {
-        	estadoRepository.deleteById(id);
-        	
-    	} catch (EmptyResultDataAccessException e){
-             throw new EntidadeNaoEncontradaExecption(
-               String.format("Não existe um cadastro de estado com código %d", id));	
-    		
-		 } catch (DataIntegrityViolationException e) {
-			throw new EntidadeEmUsoException(
-			  String.format("Estado de código %d não pode ser removido, pois está em uso", id));
+		public Estado buscar(Long estadoId) {
+			return estadoRepository.findById(estadoId)
+					.orElseThrow(() -> new EntidadeNaoEncontradaExecption(
+				               String.format(MSG_ESTADO_NAO_ENCONTRADA,estadoId)));
+			
 		}
-    	
-		
-	}
+	
+		@Transactional
+		public Estado adicionar(Estado estado) {
+			return estadoRepository.save(estado);	
+		}
+	
+		@Transactional
+		public Estado atualizar(Estado estado) {
+			return estadoRepository.save(estado);
+		}
+	
+		@Transactional
+		public void remover(Long id) {
+			
+			try {
+	        	estadoRepository.deleteById(id);
+	        	estadoRepository.flush();
+	        	
+	    	} catch (EmptyResultDataAccessException e){
+	    		
+	             throw new EntidadeNaoEncontradaExecption(
+	               String.format(MSG_ESTADO_NAO_ENCONTRADA, id));	
+	    		
+			 } catch (DataIntegrityViolationException e) {
+				 
+				throw new EntidadeEmUsoException(
+				  String.format(MSG_ESTADO_EM_USO, id));
+			}
+	    	
+			
+		}
 
    
    

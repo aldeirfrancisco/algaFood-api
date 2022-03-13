@@ -40,9 +40,8 @@ public class EstadoController {
     }
     
 	 @GetMapping("/{estadoId}")
-	public ResponseEntity<Estado> buscar(@PathVariable Long estadoId){
-		 Estado estado  =  estadoService.buscar(estadoId);
-	       return ResponseEntity.ok(estado);
+	public Estado buscar(@PathVariable Long estadoId){
+	       return  estadoService.buscar(estadoId);
 	}
     
 	 @PostMapping
@@ -70,19 +69,9 @@ public class EstadoController {
 	    	
 	    }
 	 
-	  @DeleteMapping("/{estadoId}")
-	    public ResponseEntity<Restaurante> remover(@PathVariable Long estadoId) {
-	    	try {
+	    @DeleteMapping("/{estadoId}")
+	    public void remover(@PathVariable Long estadoId) {
 	    		estadoService.remover(estadoId);
-	        		return ResponseEntity.noContent().build();
-	        		
-	    	} catch (EntidadeNaoEncontradaExecption e ){
-	        		return ResponseEntity.notFound().build();
-	        	
-		    } catch (EntidadeEmUsoException e){
-		    	
-					return ResponseEntity.status(HttpStatus.CONFLICT).build();
-				}
 	    }
 
 	    
