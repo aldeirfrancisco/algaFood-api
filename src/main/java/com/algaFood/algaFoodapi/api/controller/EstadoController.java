@@ -15,13 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
-import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
+import com.algaFood.algaFoodapi.domain.exception.EstadoNaoEncontradoException;
+import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.model.Estado;
-import com.algaFood.algaFoodapi.domain.model.Restaurante;
-import com.algaFood.algaFoodapi.domain.model.Estado;
-import com.algaFood.algaFoodapi.domain.model.Estado;
-import com.algaFood.algaFoodapi.domain.repository.EstadoRepository;
 import com.algaFood.algaFoodapi.domain.service.EstadoService;
 
 
@@ -45,27 +41,35 @@ public class EstadoController {
 	}
     
 	 @PostMapping
-	 public ResponseEntity<?> adicionar(@RequestBody Estado estado){ 
+	 public Estado adicionar(@RequestBody Estado estado){ 
 		 try {
-			  estado = estadoService.adicionar(estado);
-			 return ResponseEntity.status(HttpStatus.CREATED)
-					 .body(estado);
-		} catch (EntidadeNaoEncontradaExecption e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+		
+			 return estadoService.adicionar(estado);
+			 
+		} catch (EstadoNaoEncontradoException e) {
+			
+			 throw new NegocioException(e.getMessage());
 		}
 		 
 	 }
 	 
 	 @PutMapping("/{estadoId}")
-	    public ResponseEntity<Estado> atualizar(@PathVariable Long estadoId,
+	    public Estado atualizar(@PathVariable Long estadoId,
 	    		@RequestBody Estado estado) {
-	    	Estado estadoAtual =  estadoService.buscar(estadoId);
-	    	if(estadoAtual != null) {
+		 
+		 		Estado estadoAtual =  estadoService.buscar(estadoId);
+	
 	    		BeanUtils.copyProperties(estado, estadoAtual, "id");
-	    		estadoAtual = estadoService.atualizar(estadoAtual);
-	    		return ResponseEntity.ok(estadoAtual);
-	    	}
-	    	return ResponseEntity.notFound().build();
+	    	
+	    		
+	    		try {
+	    			
+	    			return estadoService.atualizar(estadoAtual);
+	    			
+				} catch (EstadoNaoEncontradoException e) {
+					throw new NegocioException(e.getMessage());
+				}
+	    	
 	    	
 	    }
 	 

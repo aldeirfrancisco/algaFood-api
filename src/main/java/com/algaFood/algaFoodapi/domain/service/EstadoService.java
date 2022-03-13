@@ -2,15 +2,13 @@ package com.algaFood.algaFoodapi.domain.service;
 
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
-import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
+import com.algaFood.algaFoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.model.Estado;
 import com.algaFood.algaFoodapi.domain.repository.EstadoRepository;
 
@@ -21,8 +19,6 @@ public class EstadoService {
 	    private static final String MSG_ESTADO_EM_USO 
 	      = "Estado de código %d não pode ser removido, pois está em uso";
 	   
-		private static final String MSG_ESTADO_NAO_ENCONTRADA 
-		   = "Não existe um cadastro de estado com código %d";
 		
 		private EstadoRepository estadoRepository;
 	
@@ -37,8 +33,7 @@ public class EstadoService {
 
 		public Estado buscar(Long estadoId) {
 			return estadoRepository.findById(estadoId)
-					.orElseThrow(() -> new EntidadeNaoEncontradaExecption(
-				               String.format(MSG_ESTADO_NAO_ENCONTRADA,estadoId)));
+					.orElseThrow(() -> new EstadoNaoEncontradoException(estadoId));
 			
 		}
 	
@@ -61,8 +56,7 @@ public class EstadoService {
 	        	
 	    	} catch (EmptyResultDataAccessException e){
 	    		
-	             throw new EntidadeNaoEncontradaExecption(
-	               String.format(MSG_ESTADO_NAO_ENCONTRADA, id));	
+	             throw new EstadoNaoEncontradoException(e.getLocalizedMessage());	
 	    		
 			 } catch (DataIntegrityViolationException e) {
 				 
