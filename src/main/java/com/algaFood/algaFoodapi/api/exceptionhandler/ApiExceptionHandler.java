@@ -8,6 +8,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 
@@ -46,6 +47,18 @@ public class ApiExceptionHandler {
     			.msg("O tipo de mídia não é aceita.").build();
     	
     	return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    			.body(problema);
+    }
+    
+    @ExceptionHandler(EntidadeEmUsoException.class)
+    public ResponseEntity<?> trataEntidadeEmUsoException(
+    		EntidadeEmUsoException e){
+    	
+    	Problema problema = Problema.builder()
+    			.dataHora(LocalDateTime.now())
+    			.msg(e.getMessage()).build();
+    	
+    	return ResponseEntity.status(HttpStatus.CONFLICT)
     			.body(problema);
     }
 }
