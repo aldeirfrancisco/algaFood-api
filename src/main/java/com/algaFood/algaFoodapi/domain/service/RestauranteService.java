@@ -68,7 +68,6 @@ public class RestauranteService {
 	}
     
 	@Transactional
-
 	public void remover(Long id) {
 		
 		try {
