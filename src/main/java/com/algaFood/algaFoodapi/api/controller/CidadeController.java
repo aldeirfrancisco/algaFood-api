@@ -85,26 +85,4 @@ public class CidadeController {
 
 	    }
 
-	    @ExceptionHandler(EntidadeNaoEncontradaExecption.class)
-	    public ResponseEntity<?> trataEntidadeNaoEncontradaException(
-	    		 EntidadeNaoEncontradaExecption e){
-	    	Problema problema = Problema.builder()
-	    			.dataHora(LocalDateTime.now())
-	    			.msg(e.getMessage()).build();
-	    	
-	    	return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	    			.body(problema);
-	    }
-	    
-	    @ExceptionHandler(NegocioException.class)
-	    public ResponseEntity<?> trataNegocioException(
-	    		NegocioException e){
-	    	
-	    	Problema problema = Problema.builder()
-	    			.dataHora(LocalDateTime.now())
-	    			.msg(e.getMessage()).build();
-	    	
-	    	return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	    			.body(problema);
-	    }
 }
