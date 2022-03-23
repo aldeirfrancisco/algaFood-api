@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
-import com.algaFood.algaFoodapi.domain.exception.EntidadeNaoEncontradaExecption;
 import com.algaFood.algaFoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.repository.RestauranteRepository;

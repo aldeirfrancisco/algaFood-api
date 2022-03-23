@@ -1,6 +1,6 @@
 package com.algaFood.algaFoodapi.domain.exception;
 
-public class EstadoNaoEncontradoException extends  EntidadeNaoEncontradaExecption {
+public class EstadoNaoEncontradoException extends  EntidadeNaoEncontradaException {
 	private static final long serialVersionUID = 1L;
 	
 	private static final String MSG_ESTADO_NAO_ENCONTRADA 
