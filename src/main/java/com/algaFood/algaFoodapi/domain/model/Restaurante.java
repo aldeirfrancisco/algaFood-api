@@ -18,11 +18,17 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.algaFood.algaFoodapi.Grupos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -39,14 +45,21 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+//    @NotNull
+//    @NotEmpty
+    @NotBlank(groups = Grupos.CadastroRestaurante.class)
     private String nome;
-
+    
+//    @DecimalMin("1")
+    @PositiveOrZero(groups = Grupos.CadastroRestaurante.class)
+    @JoinColumn(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
     
 //  @JsonIgnoreProperties("hibernateLazyInitializer")
-//    @JsonIgnore
-   @ManyToOne(fetch = FetchType.LAZY)
+//  @JsonIgnore
+    @Valid
+    @NotNull(groups = Grupos.CadastroRestaurante.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;
     

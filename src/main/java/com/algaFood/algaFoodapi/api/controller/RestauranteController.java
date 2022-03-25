@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaFood.algaFoodapi.Grupos;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.service.RestauranteService;
@@ -40,7 +42,8 @@ public class RestauranteController {
 	}
 	 @PostMapping
 	 @ResponseStatus(HttpStatus.CREATED)
-	 public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante){ 
+	 public Restaurante adicionar(@RequestBody @Validated(Grupos.CadastroRestaurante.class)
+			 Restaurante restaurante){ 
 		 try {
 			 return  restauranteService.adicionar(restaurante);
 		 } catch (Exception e) {
