@@ -24,6 +24,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.groups.ConvertGroup;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -31,6 +32,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.algaFood.algaFoodapi.Grupos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,18 +49,19 @@ public class Restaurante {
 
 //    @NotNull
 //    @NotEmpty
-    @NotBlank(groups = Grupos.CadastroRestaurante.class)
+    @NotBlank
     private String nome;
     
 //    @DecimalMin("1")
-    @PositiveOrZero(groups = Grupos.CadastroRestaurante.class)
+    @PositiveOrZero
     @JoinColumn(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
     
 //  @JsonIgnoreProperties("hibernateLazyInitializer")
 //  @JsonIgnore
     @Valid
-    @NotNull(groups = Grupos.CadastroRestaurante.class)
+    @ConvertGroup(from = Default.class, to = Grupos.CozinhaId.class)
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;
