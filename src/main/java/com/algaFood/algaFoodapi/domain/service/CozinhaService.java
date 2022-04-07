@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.algaFood.algaFoodapi.domain.exception.CidadeNaoEncontradoException;
+import com.algaFood.algaFoodapi.domain.exception.CozinhaNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.model.Cozinha;
 import com.algaFood.algaFoodapi.domain.repository.CozinhaRepository;
@@ -54,7 +55,7 @@ public class CozinhaService  {
         	
     	} catch (EmptyResultDataAccessException e){
     		
-             throw  new CidadeNaoEncontradoException(id);	
+             throw  new CozinhaNaoEncontradoException(id);	
     		
 		 } catch (DataIntegrityViolationException e) {
 			 
