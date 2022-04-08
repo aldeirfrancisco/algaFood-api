@@ -1,52 +1,52 @@
 package com.algaFood.algaFoodapi;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static io.restassured.RestAssured.given;
 
-import javax.validation.ConstraintViolationException;
-
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.algaFood.algaFoodapi.domain.exception.CozinhaNaoEncontradoException;
-import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
-import com.algaFood.algaFoodapi.domain.model.Cozinha;
-import com.algaFood.algaFoodapi.domain.service.CozinhaService;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.matcher.ResponseAwareMatcher;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CadastrarCozinhaIT {
-    
-     @Autowired
-	CozinhaService cozinhaService;
-	
-	@Test
-	public void deveAtribuirId_quandoCadastroCozinhaComDadosCorretos() {
-		Cozinha cozinha = new Cozinha();
-		 cozinha.setNome("chinesa");
-		 cozinha = cozinhaService.adicionar(cozinha);
-		 assertThat(cozinha.getId()).isNotNull();
-	}
-	
-	@Test(expected = ConstraintViolationException.class)
-	public void deveFalhar_quandoCadastraCozinhaSemNome() {
-		Cozinha cozinha = new Cozinha();
-		 cozinha.setNome(null);
-		 cozinha = cozinhaService.adicionar(cozinha);
-
-	}
-	@Test(expected = EntidadeEmUsoException.class)
-	public void deveFalhar_quandoExcluirCozinhaEmUso() {
-		 cozinhaService.remover(1L);
-
-	}
-	
-	@Test(expected = CozinhaNaoEncontradoException.class)
-	public void deveFalhar_quandoExcluirCozinhaInexistente() {
-			cozinhaService.remover(30L);
-
-	}
-
+   
+  @LocalServerPort
+  private int port;
+  
+  @Test
+  public void deveRetornarStatus200_QuandoConsultaCozinhas() {
+	  RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+	  given()
+	      .basePath("/cozinhas")
+	      .port(port)
+	      .accept(ContentType.JSON)
+	   .when()
+	      .get()
+	   .then()
+	      .statusCode(HttpStatus.OK.value());
+  }
+  
+  @Test
+  public void deveConter4Cozinha_QuandoConsultaCozinhas() {
+	  RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+	  //Matchers: é uma biblioteca para escrever espresões com regras de corespondencia entre objeto.
+	  given()
+	      .basePath("/cozinhas")
+	      .port(port)
+	      .accept(ContentType.JSON)
+	   .when()
+	      .get()
+	   .then()
+	      .body("", Matchers.hasSize(4))
+	      .body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
+  }
 }
