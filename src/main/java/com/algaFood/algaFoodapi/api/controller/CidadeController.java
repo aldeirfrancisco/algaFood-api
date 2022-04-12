@@ -2,6 +2,8 @@ package com.algaFood.algaFoodapi.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaFood.algaFoodapi.api.mapper.CidadeMapper;
+import com.algaFood.algaFoodapi.api.model.dto.CidadeDTO;
+import com.algaFood.algaFoodapi.api.model.input.cidade.CidadeInput;
 import com.algaFood.algaFoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.model.Cidade;
@@ -37,22 +41,22 @@ public class CidadeController {
     }
 
     @GetMapping
-    public List<Cidade> listar(){
-        return this.cidadeService.listar();
+    public List<CidadeDTO> listar(){
+        return mapper.toCollectionDto(cidadeService.listar());
 
     }
     
 	 @GetMapping("/{cidadeId}")
-	public Cidade buscar(@PathVariable Long cidadeId){
-	       return  cidadeService.buscar(cidadeId);
+	public CidadeDTO buscar(@PathVariable Long cidadeId){
+	       return mapper.toDto(cidadeService.buscar(cidadeId));
 	}
     
 	 @PostMapping
 	 @ResponseStatus(HttpStatus.CREATED)
-	 public Cidade adicionar(@RequestBody Cidade cidade){ 
+	 public CidadeDTO adicionar(@RequestBody @Valid CidadeInput cidadeInput){ 
 			try {
-				
-				return cidadeService.adicionar(cidade);
+				  var cidade = mapper.toEntity(cidadeInput);
+				return mapper.toDto(cidadeService.adicionar(cidade));
 				
             } catch (EstadoNaoEncontradoException e) {
 				
@@ -62,14 +66,14 @@ public class CidadeController {
 	 }
 	 
 	 @PutMapping("/{cidadeId}")
-	 public Cidade atualizar(@PathVariable Long cidadeId,
-	    		@RequestBody Cidade cidade) {
+	 public CidadeDTO atualizar(@PathVariable Long cidadeId,
+             @RequestBody @Valid CidadeInput cidadeInput) {
 		 
-	    	Cidade cidadeAtual =  cidadeService.buscar(cidadeId);
-	    	BeanUtils.copyProperties(cidade, cidadeAtual, "id");
+	    	var cidadeAtual =  cidadeService.buscar(cidadeId);
+	    	mapper.copyToEntity(cidadeInput, cidadeAtual);
 	    	try {
 	    		
-	    		return cidadeService.atualizar(cidadeAtual);
+	    		return mapper.toDto(cidadeService.atualizar(cidadeAtual));
 	    		
 			} catch (EstadoNaoEncontradoException e) {
 				
@@ -79,6 +83,7 @@ public class CidadeController {
 	    }
 	 
 	  @DeleteMapping("/{cidadeId}")
+	  @ResponseStatus(HttpStatus.NO_CONTENT)
 	  public void remover(@PathVariable Long cidadeId) {
 	    		cidadeService.remover(cidadeId);
 
