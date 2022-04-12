@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaFood.algaFoodapi.api.mapper.CidadeMapper;
 import com.algaFood.algaFoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.model.Cidade;
@@ -28,8 +29,11 @@ public class CidadeController {
 //	private CidadeService cidadeService;
 	 private final CidadeService cidadeService;
 	 
-    CidadeController(CidadeService cidadeService){
+	 private final CidadeMapper mapper;
+	 
+    CidadeController(CidadeService cidadeService, CidadeMapper mapper){
     	this.cidadeService = cidadeService;
+    	this.mapper = mapper;
     }
 
     @GetMapping
