@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +20,6 @@ import com.algaFood.algaFoodapi.api.model.dto.CidadeDTO;
 import com.algaFood.algaFoodapi.api.model.input.cidade.CidadeInput;
 import com.algaFood.algaFoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
-import com.algaFood.algaFoodapi.domain.model.Cidade;
 import com.algaFood.algaFoodapi.domain.service.CidadeService;
 
 
