@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.algaFood.algaFoodapi.api.mapper.CozinhaMapper;
 import com.algaFood.algaFoodapi.api.model.dto.CozinhaDTO;
+import com.algaFood.algaFoodapi.api.model.input.cozinha.CozinhaInput;
 import com.algaFood.algaFoodapi.api.model.input.restaurante.CozinhaIdInput;
 import com.algaFood.algaFoodapi.domain.exception.CidadeNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.CozinhaNaoEncontradoException;
@@ -50,8 +51,9 @@ public class CozinhaService  {
     }
 
     @Transactional
-    public Cozinha adicionar( Cozinha cozinha){
-    	return cozinhaRepository.save(cozinha);
+    public CozinhaDTO adicionar( CozinhaInput cozinhainput){
+    	var cozinha = mapper.toEntity(cozinhainput);
+    	return mapper.toDto(cozinhaRepository.save(cozinha));
     }
 
     @Transactional

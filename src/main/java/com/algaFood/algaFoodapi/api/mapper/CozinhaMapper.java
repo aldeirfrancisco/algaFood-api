@@ -31,7 +31,7 @@ public class CozinhaMapper {
     }
 
 
-    public Cozinha toEntity(CozinhaDTO cozinha){
+    public Cozinha toEntity(CozinhaInput cozinha){
 
         return modelMapper.map(cozinha, Cozinha.class);
 

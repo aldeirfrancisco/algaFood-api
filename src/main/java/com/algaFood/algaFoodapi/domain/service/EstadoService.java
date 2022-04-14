@@ -7,6 +7,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.algaFood.algaFoodapi.api.mapper.EstadoMapper;
+import com.algaFood.algaFoodapi.api.model.dto.EstadoDTO;
+import com.algaFood.algaFoodapi.api.model.input.estado.EstadoInput;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.model.Estado;
@@ -21,12 +24,17 @@ public class EstadoService {
 	   
 		
 		private EstadoRepository estadoRepository;
+		
+		 private final EstadoMapper mapper;
 	
-	    public EstadoService(EstadoRepository estadoRepository) {
+	    public EstadoService(EstadoRepository estadoRepository, EstadoMapper mapper) {
 	    	this.estadoRepository = estadoRepository;
+	    	this.mapper = mapper;
 	    }
-	    public List<Estado> listar(){
-	        return estadoRepository.findAll();
+	    
+	    public List<EstadoDTO> listar(){
+	    	var estados = estadoRepository.findAll();
+	        return mapper.toCollectionDto(estados);
 	
 	    }
 
@@ -36,10 +44,17 @@ public class EstadoService {
 					.orElseThrow(() -> new EstadoNaoEncontradoException(estadoId));
 			
 		}
+		
+		public EstadoDTO buscarDTO(Long estadoId) {
+			var estado = buscar(estadoId);
+			return mapper.toDto(estado);
+			
+		}
 	
 		@Transactional
-		public Estado adicionar(Estado estado) {
-			return estadoRepository.save(estado);	
+		public EstadoDTO adicionar(EstadoInput estadoInput) {
+			var estado = mapper.toEntity(estadoInput);
+			return mapper.toDto(estadoRepository.save(estado));	
 		}
 	
 		@Transactional

@@ -48,7 +48,7 @@ public class CozinhaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cozinha adicionar(@Valid @RequestBody Cozinha cozinha){
+    public CozinhaDTO adicionar(@Valid @RequestBody CozinhaInput cozinha){
 
         return cozinhaService.adicionar(cozinha);
 

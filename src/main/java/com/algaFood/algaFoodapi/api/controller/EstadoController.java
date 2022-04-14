@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaFood.algaFoodapi.api.model.dto.EstadoDTO;
+import com.algaFood.algaFoodapi.api.model.input.estado.EstadoInput;
 import com.algaFood.algaFoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.model.Estado;
@@ -30,18 +32,18 @@ public class EstadoController {
 
 
     @GetMapping
-    public List<Estado> listar(){
+    public List<EstadoDTO> listar(){
         return estadoService.listar();
 
     }
     
 	 @GetMapping("/{estadoId}")
-	public Estado buscar(@PathVariable Long estadoId){
-	       return  estadoService.buscar(estadoId);
+	public EstadoDTO buscar(@PathVariable Long estadoId){
+	       return  estadoService.buscarDTO(estadoId);
 	}
     
 	 @PostMapping
-	 public Estado adicionar(@RequestBody Estado estado){ 
+	 public EstadoDTO adicionar(@RequestBody EstadoInput estado){ 
 		 try {
 		
 			 return estadoService.adicionar(estado);
