@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaFood.algaFoodapi.api.mapper.CozinhaMapper;
+import com.algaFood.algaFoodapi.api.model.dto.CozinhaDTO;
+import com.algaFood.algaFoodapi.api.model.input.cozinha.CozinhaInput;
 import com.algaFood.algaFoodapi.domain.model.Cozinha;
 import com.algaFood.algaFoodapi.domain.service.CozinhaService;
 
@@ -26,17 +29,20 @@ import com.algaFood.algaFoodapi.domain.service.CozinhaService;
 public class CozinhaController {
      @Autowired
 	private CozinhaService cozinhaService;
+     
+     @Autowired
+     private CozinhaMapper mapper;
 
-
+     
     @GetMapping
-    public List<Cozinha> listarCozinha(){
+    public List<CozinhaDTO> listarCozinha(){
         return cozinhaService.listar();
 
     }
 
     @GetMapping("/{cozinhaId}")
-    public Cozinha buscar(@PathVariable Long cozinhaId){
-    	return cozinhaService.buscar(cozinhaId);
+    public CozinhaDTO buscar(@PathVariable Long cozinhaId){
+    	return cozinhaService.buscarDTO(cozinhaId);
      
     }
 
@@ -49,13 +55,13 @@ public class CozinhaController {
     }
 
     @PutMapping("/{cozinhaId}")
-    public Cozinha atualizar(@PathVariable Long cozinhaId,
-    		@Valid @RequestBody Cozinha cozinha) {
+    public CozinhaDTO atualizar(@PathVariable Long cozinhaId,
+    		@Valid @RequestBody CozinhaInput cozinhaInput) {
 
-    	Cozinha cozinhaAtual =  cozinhaService.buscar(cozinhaId);
-        BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
+    	var cozinhaAtual =  cozinhaService.buscar(cozinhaId);
+    	mapper.copyToEntity(cozinhaInput, cozinhaAtual);
     	
-        return cozinhaService.atualizar(cozinhaAtual);
+        return cozinhaService.atualizar(cozinhaAtual); 
 
     }
     

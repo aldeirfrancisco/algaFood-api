@@ -30,9 +30,10 @@ public class CozinhaMapper {
         return cozinhas.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public Cozinha toEntity(CozinhaInput cozinhaInput){
 
-        return modelMapper.map(cozinhaInput, Cozinha.class);
+    public Cozinha toEntity(CozinhaDTO cozinha){
+
+        return modelMapper.map(cozinha, Cozinha.class);
 
     }
 

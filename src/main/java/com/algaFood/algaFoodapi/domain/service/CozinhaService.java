@@ -7,6 +7,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.algaFood.algaFoodapi.api.mapper.CozinhaMapper;
+import com.algaFood.algaFoodapi.api.model.dto.CozinhaDTO;
+import com.algaFood.algaFoodapi.api.model.input.restaurante.CozinhaIdInput;
 import com.algaFood.algaFoodapi.domain.exception.CidadeNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.CozinhaNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
@@ -21,18 +24,29 @@ public class CozinhaService  {
     
     private CozinhaRepository cozinhaRepository;
     
-    public CozinhaService(CozinhaRepository cozinhaRepository) {
+    private final CozinhaMapper mapper;
+    
+    public CozinhaService(CozinhaRepository cozinhaRepository, CozinhaMapper mapper) {
     	this.cozinhaRepository = cozinhaRepository;
+    	this.mapper = mapper;
     }
 
-    public List<Cozinha> listar(){
-        return cozinhaRepository.findAll();
+    public List<CozinhaDTO> listar(){
+    	var cozinha = cozinhaRepository.findAll();
+        return mapper.toCollectionDto(cozinha); 
 
     }
 
     public Cozinha buscar(Long cozinhaId){
-         return cozinhaRepository.findById(cozinhaId)
-        		 .orElseThrow(() -> new CidadeNaoEncontradoException(cozinhaId));	      
+    	return cozinhaRepository.findById(cozinhaId)
+        		 .orElseThrow(() -> new CidadeNaoEncontradoException(cozinhaId));
+        
+    }
+    public CozinhaDTO buscarDTO(Long cozinhaId){
+    	var cozinha = cozinhaRepository.findById(cozinhaId)
+        		 .orElseThrow(() -> new CidadeNaoEncontradoException(cozinhaId));
+    	return mapper.toDto(cozinha);
+        
     }
 
     @Transactional
@@ -41,8 +55,9 @@ public class CozinhaService  {
     }
 
     @Transactional
-    public Cozinha atualizar(Cozinha cozinha) {
-    	return cozinhaRepository.save(cozinha);
+    public CozinhaDTO  atualizar(Cozinha cozinha) {
+    	var co = cozinhaRepository.save(cozinha);
+    	return mapper.toDto(co);
     }
 
    
