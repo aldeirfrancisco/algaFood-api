@@ -9,6 +9,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.algaFood.algaFoodapi.api.mapper.RestauranteMapper;
+import com.algaFood.algaFoodapi.api.model.dto.RestauranteDTO;
+import com.algaFood.algaFoodapi.api.model.input.restaurante.RestauranteInput;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
 import com.algaFood.algaFoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
@@ -24,22 +27,27 @@ public class RestauranteService {
 	private static final String MSG_COZINHA_NAO_ENCONTRADA 
 	       = "Não existe  cadastro de cozinha com código %d";
 	 
-	 private RestauranteRepository restauranteRepository;
-	 
-	 public RestauranteService(RestauranteRepository restauranteRepository){
-		 this.restauranteRepository = restauranteRepository;
-	 }
-	 
 	 @Autowired
 	 private CozinhaService cozinhaService;
-	
+	 
+	 private RestauranteRepository restauranteRepository;
+	 
+	 private final RestauranteMapper mapper;
+	 
+	 public RestauranteService(RestauranteRepository restauranteRepository, RestauranteMapper mapper){
+		 this.restauranteRepository = restauranteRepository;
+		 this.mapper = mapper;
+	 }
+	 
+	 
 
-	public List<Restaurante> listar() {
-		 return restauranteRepository.findAll();
+	public List<RestauranteDTO> listar() {
+		 return mapper.toCollectionDto(restauranteRepository.findAll());
 	}
 	
-	public List<Restaurante> restaurantePorNomeFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal         					taxaFreteFinal) {
-		 return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
+	public List<RestauranteDTO> restaurantePorNomeFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal         					taxaFreteFinal) {
+		 var restaurantes = restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
+		 return mapper.toCollectionDto(restaurantes);
 	}
 
 
@@ -47,20 +55,33 @@ public class RestauranteService {
 		return restauranteRepository.findById(restauranteId)
 				.orElseThrow(()-> new  RestauranteNaoEncontradoException(restauranteId));
 		
+		
+			
+		
+	}
+	
+	public RestauranteDTO buscarDTO(Long restauranteId) {
+		var restaurante = buscar(restauranteId);
+		return mapper.toDto(restaurante);
+		
 			
 		
 	}
 
 	@Transactional
-	public Restaurante adicionar(Restaurante restaurante) {
+	public RestauranteDTO adicionar(RestauranteInput restauranteInput) {
+		 var restaurante = mapper.toEntity(restauranteInput);
 		Long idCozinha = restaurante.getCozinha().getId();
 		 restaurante.setCozinha( cozinhaService.buscar(idCozinha) );
-		 return restauranteRepository.save(restaurante);
+		 return  mapper.toDto(restauranteRepository.save(restaurante));
  
 	}
     
 	@Transactional
-	public Restaurante atualizar(Restaurante restaurante) {
+	public Restaurante atualizar(Long id, RestauranteInput restauranteInput) {
+		var restaurante = buscar(id);
+		mapper.copyToEntity(restauranteInput, restaurante);
+		
 		Long idCozinha = restaurante.getCozinha().getId();
 		 restaurante.setCozinha(cozinhaService.buscar(idCozinha));
 		 return restauranteRepository.save(restaurante);

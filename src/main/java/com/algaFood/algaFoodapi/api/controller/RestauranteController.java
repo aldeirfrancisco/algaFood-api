@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaFood.algaFoodapi.Grupos;
+import com.algaFood.algaFoodapi.api.model.dto.RestauranteDTO;
+import com.algaFood.algaFoodapi.api.model.input.restaurante.RestauranteInput;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.service.RestauranteService;
@@ -31,18 +33,18 @@ public class RestauranteController {
 	private RestauranteService restauranteService;
 	
 	 @GetMapping
-	public List<Restaurante> listarRestaurante(){
+	public List<RestauranteDTO> listarRestaurante(){
 		return restauranteService.listar();
 	}
 	 
 	 @GetMapping("/{restauranteId}")
-	public Restaurante buscar(@PathVariable Long restauranteId){
-		 return restauranteService.buscar(restauranteId);
+	public RestauranteDTO buscar(@PathVariable Long restauranteId){
+		 return restauranteService.buscarDTO(restauranteId);
 	    
 	}
 	 @PostMapping
 	 @ResponseStatus(HttpStatus.CREATED)
-	 public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante){ 
+	 public RestauranteDTO adicionar(@RequestBody @Valid RestauranteInput restaurante){ 
 		 try {
 			 return  restauranteService.adicionar(restaurante);
 		 } catch (Exception e) {
@@ -54,14 +56,11 @@ public class RestauranteController {
 	 
 	    @PutMapping("/{restauranteId}")
 	    public Restaurante atualizar(@PathVariable Long restauranteId,
-	    		@RequestBody @Valid Restaurante restaurante) {
-	    	
-	    	 Restaurante restauranteAtual =  restauranteService.buscar(restauranteId);
-	    	 BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco");
-	    	 
+	    		@RequestBody @Valid RestauranteInput restaurante) {
+	    		 
 	    	 try {
 	    		 
-	    		 return restauranteService.atualizar(restauranteAtual);
+	    		 return restauranteService.atualizar(restauranteId, restaurante);
 	    	 
 		    } catch (Exception e) {
 				
