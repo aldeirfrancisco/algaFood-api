@@ -72,19 +72,27 @@ public class RestauranteService {
 	public RestauranteDTO adicionar(RestauranteInput restauranteInput) {
 		 var restaurante = mapper.toEntity(restauranteInput);
 		Long idCozinha = restaurante.getCozinha().getId();
-		 restaurante.setCozinha( cozinhaService.buscar(idCozinha) );
+		var cozinha = cozinhaService.buscar(idCozinha);
+		 restaurante.setCozinha( cozinha );
 		 return  mapper.toDto(restauranteRepository.save(restaurante));
  
 	}
     
 	@Transactional
-	public Restaurante atualizar(Long id, RestauranteInput restauranteInput) {
+	public RestauranteDTO atualizar(Long id, RestauranteInput restauranteInput) {
 		var restaurante = buscar(id);
 		mapper.copyToEntity(restauranteInput, restaurante);
 		
 		Long idCozinha = restaurante.getCozinha().getId();
-		 restaurante.setCozinha(cozinhaService.buscar(idCozinha));
-		 return restauranteRepository.save(restaurante);
+		var cozinha = cozinhaService.buscar(idCozinha);
+		 restaurante.setCozinha(cozinha);
+		var rest = restauranteRepository.save(restaurante);
+
+		 
+		  return buscarDTO(rest.getId());
+	
+		 
+		 
 	}
     
 	@Transactional

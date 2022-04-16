@@ -1,6 +1,7 @@
 package com.algaFood.algaFoodapi.domain.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -39,13 +40,13 @@ public class CozinhaService  {
     }
 
     public Cozinha buscar(Long cozinhaId){
-    	return cozinhaRepository.findById(cozinhaId)
-        		 .orElseThrow(() -> new CidadeNaoEncontradoException(cozinhaId));
-        
+    	var cozinha = cozinhaRepository.findById(cozinhaId)
+      		 .orElseThrow(() -> new CozinhaNaoEncontradoException(cozinhaId));
+   
+    	return cozinha;
     }
     public CozinhaDTO buscarDTO(Long cozinhaId){
-    	var cozinha = cozinhaRepository.findById(cozinhaId)
-        		 .orElseThrow(() -> new CidadeNaoEncontradoException(cozinhaId));
+    	var cozinha = buscar(cozinhaId);
     	return mapper.toDto(cozinha);
         
     }

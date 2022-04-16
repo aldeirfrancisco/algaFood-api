@@ -55,7 +55,7 @@ public class RestauranteController {
 	 
 	 
 	    @PutMapping("/{restauranteId}")
-	    public Restaurante atualizar(@PathVariable Long restauranteId,
+	    public RestauranteDTO  atualizar(@PathVariable Long restauranteId,
 	    		@RequestBody @Valid RestauranteInput restaurante) {
 	    		 
 	    	 try {
