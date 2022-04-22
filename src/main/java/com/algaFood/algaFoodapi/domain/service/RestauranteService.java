@@ -13,6 +13,7 @@ import com.algaFood.algaFoodapi.api.mapper.RestauranteMapper;
 import com.algaFood.algaFoodapi.api.model.dto.RestauranteDTO;
 import com.algaFood.algaFoodapi.api.model.input.restaurante.RestauranteInput;
 import com.algaFood.algaFoodapi.domain.exception.EntidadeEmUsoException;
+import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.model.Restaurante;
 import com.algaFood.algaFoodapi.domain.repository.RestauranteRepository;
@@ -29,6 +30,9 @@ public class RestauranteService {
 	 
 	 @Autowired
 	 private CozinhaService cozinhaService;
+	 
+	 @Autowired
+	 private FormaPagamentoService formaPagamentoService;
 	 
 	 private RestauranteRepository restauranteRepository;
 	 
@@ -114,6 +118,75 @@ public class RestauranteService {
 		
 	}
      
+	@Transactional
+    public void ativar(Long id) {
+
+        var restaurante = this.buscar(id);
+
+        restaurante.setAtivo(true);
+
+    }
+
+    @Transactional
+    public void inativar(Long id) {
+
+        var restaurante = this.buscar(id);
+
+        restaurante.setAtivo(false);
+
+    }
+
+    @Transactional
+
+    public void desassociarFormaPagamento(Long idRestaurante, Long idFormaPagamento) {
+
+        var restaurante = this.buscar(idRestaurante);
+        var formaPagamento = formaPagamentoService.buscarOuFalhar(idFormaPagamento);
+
+        if(!restaurante.getFormasPagamento().contains(formaPagamento)){
+
+            throw new NegocioException("Forma de pagamento já está desassociada.");
+
+        }
+
+        restaurante.getFormasPagamento().remove(formaPagamento);
+
+    }
+
+    @Transactional
+
+    public void associarFormaPagamento(Long idRestaurante, Long idFormaPagamento) {
+
+        var restaurante = this.buscar(idRestaurante);
+        var formaPagamento = formaPagamentoService.buscarOuFalhar(idFormaPagamento);
+
+        if(restaurante.getFormasPagamento().contains(formaPagamento)){
+
+            throw new NegocioException("Forma de pagamento já está associada.");
+
+        }
+
+        restaurante.getFormasPagamento().add(formaPagamento);
+
+    }
+
+    @Transactional
+    public void abrir(Long id) {
+
+        var restaurante = this.buscar(id);
+        restaurante.setAberto(true);
+
+    }
+
+    @Transactional
+
+    public void fechar(Long id) {
+
+        var restaurante = this.buscar(id);
+
+        restaurante.setAberto(false);
+
+    }
 	
 
 }

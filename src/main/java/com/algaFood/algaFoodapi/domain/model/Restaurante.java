@@ -93,4 +93,6 @@ public class Restaurante {
     
     private Boolean ativo = Boolean.TRUE;
     
+    private Boolean aberto = Boolean.FALSE;
+    
 }
