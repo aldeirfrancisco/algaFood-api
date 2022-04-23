@@ -32,6 +32,9 @@ public class RestauranteService {
 	 private CozinhaService cozinhaService;
 	 
 	 @Autowired
+	 private CidadeService cidadeService;
+	 
+	 @Autowired
 	 private FormaPagamentoService formaPagamentoService;
 	 
 	 private RestauranteRepository restauranteRepository;
@@ -75,10 +78,8 @@ public class RestauranteService {
 	@Transactional
 	public RestauranteDTO adicionar(RestauranteInput restauranteInput) {
 		 var restaurante = mapper.toEntity(restauranteInput);
-		Long idCozinha = restaurante.getCozinha().getId();
-		var cozinha = cozinhaService.buscar(idCozinha);
-		 restaurante.setCozinha( cozinha );
-		 return  mapper.toDto(restauranteRepository.save(restaurante));
+
+		 return  mapper.toDto(restauranteRepository.save(salvar(restaurante)));
  
 	}
     
@@ -86,14 +87,8 @@ public class RestauranteService {
 	public RestauranteDTO atualizar(Long id, RestauranteInput restauranteInput) {
 		var restaurante = buscar(id);
 		mapper.copyToEntity(restauranteInput, restaurante);
-		
-		Long idCozinha = restaurante.getCozinha().getId();
-		var cozinha = cozinhaService.buscar(idCozinha);
-		 restaurante.setCozinha(cozinha);
-		var rest = restauranteRepository.save(restaurante);
 
-		 
-		  return buscarDTO(rest.getId());
+		  return mapper.toDto(salvar(restaurante));
 	
 		 
 		 
@@ -188,5 +183,21 @@ public class RestauranteService {
 
     }
 	
+    private Restaurante salvar (Restaurante restaurante) {
+
+            long cozinhaId = restaurante.getCozinha().getId();
+
+            long cidadeId = restaurante.getEndereco().getCidade().getId();
+
+            var cozinha = cozinhaService.buscar(cozinhaId);
+
+            var cidade = cidadeService.buscar(cidadeId);
+
+            restaurante.setCozinha(cozinha);
+
+            restaurante.getEndereco().setCidade(cidade);
+
+            return restauranteRepository.save(restaurante);
+    }
 
 }
