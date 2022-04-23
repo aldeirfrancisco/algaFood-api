@@ -44,11 +44,11 @@
 			<optional>true</optional>
 		</dependency>
 		 <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-      <!--<dependency>
+      <!-- <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>7.15.0</version>
-        </dependency>  -->
+        </dependency> -->
         
          <dependency>
             <groupId>org.apache.commons</groupId>
