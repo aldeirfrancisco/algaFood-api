@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.algaFood.algaFoodapi.domain.exception.EmailJaCadastadoException;
 import com.algaFood.algaFoodapi.domain.exception.NegocioException;
 import com.algaFood.algaFoodapi.domain.exception.UsuarioNaoEncontradoException;
 import com.algaFood.algaFoodapi.domain.model.Usuario;
@@ -42,13 +43,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         manager.detach(usuario);
 
-//        //verifica se o email já existe
-//        var usuarioExistente = repository.findByEmail(usuario.getEmail());
-//
-//        //verifica se existe um usuário com esse email e se é diferente do usuário que vem no parâmetro
-//        if(usuarioExistente.isPresent() && !usuarioExistente.get().equals(usuario)){
-//            throw new EmailJaCadastadoException(String.format(MSG_EMAIL_JA_CADASTRADO, usuario.getEmail()));
-//        }
+       
+        var usuarioExistente = repository.findByEmail(usuario.getEmail());
+
+        if(usuarioExistente.isPresent() && !usuarioExistente.get().equals(usuario)){
+            throw new EmailJaCadastadoException(String.format(MSG_EMAIL_JA_CADASTRADO, usuario.getEmail()));
+        }
 
         return repository.save(usuario);
     }

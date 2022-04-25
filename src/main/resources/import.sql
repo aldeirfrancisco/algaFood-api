@@ -58,7 +58,10 @@ insert into usuario (id, nome, email, senha, data_cadastro) values (3, 'José So
 insert into usuario (id, nome, email, senha, data_cadastro) values (4, 'Sebastião Martins', 'sebastiao.cad@algafood.com', '123', sysdate());
 
 
-insert into usuario_grupo (usuario_id, grupo_id) values (1, 1);
+insert into usuario_grupo (usuario_id, grupo_id) values (1, 3);
+insert into usuario_grupo (usuario_id, grupo_id) values (2, 4);
+insert into usuario_grupo (usuario_id, grupo_id) values (3, 2);
+insert into usuario_grupo (usuario_id, grupo_id) values (4, 1);
 
 
 
