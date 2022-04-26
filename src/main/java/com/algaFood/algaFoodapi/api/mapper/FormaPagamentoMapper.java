@@ -1,6 +1,7 @@
 package com.algaFood.algaFoodapi.api.mapper;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -25,9 +26,9 @@ public class FormaPagamentoMapper {
 
 	    }
 
-	    public List<FormaPagamentoDTO> toCollectionDto(List<FormaPagamento> formasPagamento){
+	    public List<FormaPagamentoDTO> toCollectionDto(List<FormaPagamento> list){
 
-	        return formasPagamento.stream().map(this::toDto).collect(Collectors.toList());
+	        return list.stream().map(this::toDto).collect(Collectors.toList());
 	    }
 
 	    public FormaPagamento toEntity (FormaPagamentoInput formasPagamentoInput){

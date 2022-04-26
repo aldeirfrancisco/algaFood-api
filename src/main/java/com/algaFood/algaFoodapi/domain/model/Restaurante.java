@@ -78,14 +78,12 @@ public class Restaurante {
     @Column(nullable = false)
     private LocalDateTime dataAtualizacao;
     
-    //ToMany default lazy
-    //(fetch = FetchType.EAGER)
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "restaurante_forma_pagamento",
-            joinColumns = @JoinColumn(name = "restaurante_id"),
-            inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
-    private Set<FormaPagamento> formasPagamento = new HashSet<>();
+    joinColumns = @JoinColumn(name = "restaurante_id"),
+    inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
+    private List<FormaPagamento> formasPagamento;
     
     
     @OneToMany(mappedBy = "restaurante")
